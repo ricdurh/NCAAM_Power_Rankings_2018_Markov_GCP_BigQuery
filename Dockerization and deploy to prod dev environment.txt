@@ -1,0 +1,50 @@
+Upload files to bucket
+
+$ gsutil cp Dockerfile gs://rich_bucket2/     #  storage bucket name
+
+change bucket name from .txt to not
+$gsutil mv gs://rich_bucket2/Dockerfile.txt gs://rich_bucket2/Dockerfile
+
+
+make directory for markov_app
+$ mkdir markov_app
+mv to this folder
+$ mv Dockerfile requirements.txt markov_app
+build docker image
+$ gcloud builds submit --tag gcr.io/PROJECT_ID/IMAGE_NAME 
+
+confirm Docker images that are in container
+$ gcloud container images list --repository=gcr.io/PROJECT_ID      # gcr google cloud run
+
+Create a service account
+Open google cloud console
+Select project > Go to "IAM & Admin" > "Service accounts"
+Click "Create service account"
+Enter name for service and click "create"
+Grant the service account the necessary role (Big Query admin)
+
+Enable the Cloud Run API
+$ gcloud services enable run.googleapis.com
+DEPLOY to CLOUD RUN and give service_name
+$ gcloud run deploy SERVICE_NAME --image gcr.io/PROJECT_ID/IMAGE_NAME --region us-central1 --platform managed
+	
+	
+create prod environment
+$ gcloud config configurations list              # check what's already there
+$ gcloud config configurations create dev
+push to prod environment
+$ gcloud run deploy dev --image gcr.io/PROJECT_ID/IMAGE_NAME --platform managed --region us-central1 --allow-unauthenticated
+
+create dev environment
+$ gcloud config configurations create dev
+push to dev environment
+$ gcloud run deploy prod --image gcr.io/PROJECT_ID/IMAGE_NAME --platform managed --region us-central1 --allow-unauthenticated
+
+
+If making changes to the .txt and .py files, I need to update the docker image. Can do so by using a different tag
+$ docker build -t gcr.io/PROJECT_ID/IMAGE_NAME:v2  .          # The SINGLE space and then the "." is necessary and represents the cd
+
+Push the new image to the google container registry      ; needed to get off local computer and upload to place where cloud run can access it
+$ docker push gcr.io/PROJECT_ID/IMAGE_NAME:v2
+
+$ gcloud run deploy rpdservice --image gcr.io/oval-tributary-382017/markov:v14 --region us-central1 --platform managed

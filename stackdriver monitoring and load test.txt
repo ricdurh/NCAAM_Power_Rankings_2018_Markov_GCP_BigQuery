@@ -1,0 +1,18 @@
+sudo gcloud auth login
+
+gcloud auth configure-docker
+
+docker pull gcr.io/project-id/markov
+
+docker run -d -p 8080:8080 gcr.io/project-id/markov
+
+curl - sSO https://dl.google.com/cloudagents/install-monitoring-agent.sh
+
+sudo bash install-monitoring-agent.sh     # install stackdriver-agent
+
+
+
+sudo apt-get update
+sudo apt-get -y install apache2-utils   #https://aws.plainenglish.io/apachebench-how-to-load-test-and-benchmark-your-server-229456588903
+
+ab -n 1000 -c http://<YOUR_IP>/     # test the load
